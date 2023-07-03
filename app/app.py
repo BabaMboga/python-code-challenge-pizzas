@@ -46,6 +46,19 @@ class RestaurantsById(Resource):
         }
 
         return jsonify(response_body)
+    
+    def delete(self, id):
+        restaurant = Restaurant.query.get(id)
+        if restaurant is None:
+            return {'error': 'Restaurant not found'}, 404
+        #Delete the associated restaurant pizzas
+        RestaurantPizza.query.filter_by(restaurant_id=id).delete()
+
+        db.session.delete(restaurant)
+        db.session.commit()
+        return {'success': 'Record successfully deleted'}, 204
+    
+api.add_resource(RestaurantsById,'/restaurants/<int:id>')
 
 
 
