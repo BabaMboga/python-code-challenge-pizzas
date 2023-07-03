@@ -60,6 +60,42 @@ class RestaurantsById(Resource):
     
 api.add_resource(RestaurantsById,'/restaurants/<int:id>')
 
+class Pizzas(Resource):
+    def get(self):
+        pizzas = Pizza.query.all()
+        data = [{'id': p.id, 'name': p.name, 'ingredients': p.ingredients} for p in pizzas]
+        return jsonify(data)
+    
+api.add_resource(Pizzas, '/pizzas')
+
+class RestaurantPizzas(Resource):
+    def post(self):
+        price = request.form.get('price')
+        pizza_id = request.form.get('pizza_id')
+        restaurant_id = request.form.get('restaurant_id')
+
+        if price is None or pizza_id is None or restaurant_id is None:
+            return {'errors' : ['validation errors']}, 400
+        
+        pizza = Pizza.query.get(pizza_id)
+        if pizza is None:
+            return {'error': 'Pizza not found'}, 404
+        
+        restaurant = Restaurant.query.get(restaurant_id)
+        if restaurant is None:
+            return{'error': 'Restaurant not found'}, 404
+        
+        restaurant_pizza = RestaurantPizza(price=price, pizza_id=pizza_id, restaurant_id=restaurant_id)
+        db.session.add(restaurant_pizza)
+        db.session.commit()
+
+        data = {'id' : pizza.id,
+                'name' : pizza.name,
+                'ingredients': pizza.ingredients}
+        return jsonify(data)
+    
+api.add_resource(RestaurantPizzas, '/restaurant_pizzas')
+
 
 
 
