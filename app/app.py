@@ -8,7 +8,7 @@ from flask_cors import CORS
 from models import db, Restaurant, Pizza, RestaurantPizza
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/pizzas.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pizzas.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
@@ -50,7 +50,9 @@ class RestaurantsById(Resource):
     def delete(self, id):
         restaurant = Restaurant.query.get(id)
         if restaurant is None:
-            return {'error': 'Restaurant not found'}, 404
+            response_dict = {'error': 'Restaurant not found',}
+            response = make_response(jsonify(response_dict), 404)
+            return  response
         #Delete the associated restaurant pizzas
         RestaurantPizza.query.filter_by(restaurant_id=id).delete()
 
