@@ -35,6 +35,9 @@ class RestaurantPizza(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'Pizza {self.pizza_id} is made at {self.restaurant_id} and it costs{self.price}'
+    
+    def validate(self):
+        return 1 <= self.price <= 30
 
 
 
