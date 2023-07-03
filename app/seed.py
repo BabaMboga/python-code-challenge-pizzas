@@ -44,6 +44,10 @@ def create_sample_data():
         if RestaurantPizza(pizza_id=pizza.id, restaurant_id=restaurant.id, price=price).validate():
             restaurant_pizza = RestaurantPizza(pizza_id = pizza.id, restaurant_id=restaurant.id, price=price)
             restaurant_pizzas.append(restaurant_pizza)
-            
+
     db.session.add_all(restaurant_pizzas)
     db.session.commit()
+
+if __name__ == '__main__':
+    db.create_all()
+    create_sample_data()
