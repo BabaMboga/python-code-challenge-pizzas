@@ -19,6 +19,34 @@ db.init_app(app)
 
 api = Api(app)
 
+class Restaurants(Resource):
+    def get(self):
+        restaurants = Restaurant.query.all()
+        data = [{'id': r.id, 'name': r.name, 'address': r.address} for r in restaurants]
+        return jsonify(data)
+
+api.add_resource(Restaurants, '/restaurants')
+
+class RestaurantsById(Resource):
+    def get(self,id):
+        restaurant = Restaurant.query.get(id)
+        if restaurant is None:
+            return{'error': 'Restaurant not found'}, 404
+        
+        pizzas = []
+        for restaurant_pizza in restaurant.restaurant_pizzas:
+            pizza = Pizza.query.get(restaurant_pizza.pizza_id)
+            pizzas.append({'id': pizza.id, 'name': pizza.name, 'ingredients': pizza.ingredients})
+
+        response_body = {
+            'id': restaurant.id,
+            'name': restaurant.name,
+            'address': restaurant.address,
+            'pizzas': pizzas
+        }
+
+        return jsonify(response_body)
+
 
 
 
